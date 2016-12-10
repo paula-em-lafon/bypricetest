@@ -1,18 +1,20 @@
-# models.py
+from shared import db
 
 
-import datetime
-from app import db
-
-
-class Post(db.Model):
-
-    __tablename__ = 'posts'
+class Product(db.Model):
+    __tablename__ = 'products'
 
     id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String, nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False)
+    upc = db.Column(db.String(12))
+    item_name = db.Column(db.String())
+    price = db.Column(db.Float(precision=2))
+    image = db.Column(db.String())
 
-    def __init__(self, text):
-        self.text = text
-        self.date_posted = datetime.datetime.now()
+    def __init__(self, upc, item_name, price, image):
+        self.upc = upc
+        self.item_name = item_name
+        self.price = price
+        self.image = image
+
+    def __repr__(self):
+        return '<item name %r>' % self.item_name

@@ -1,30 +1,26 @@
-# app.py
-
-
 from flask import Flask
-from flask import request, render_template
-from flask.ext.sqlalchemy import SQLAlchemy
-from config import BaseConfig
-
+import os
+from shared import db
 
 app = Flask(__name__)
-app.config.from_object(BaseConfig)
-db = SQLAlchemy(app)
+app.config.from_object(os.environ['APP_SETTINGS'])
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
+
+from models import Product
 
 
-from models import *
+@app.route('/items', methods=['GET'])
+def get_items():
+    if request.args == []:
 
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        text = request.form['text']
-        post = Post(text)
-        db.session.add(post)
-        db.session.commit()
-    posts = Post.query.order_by(Post.date_posted.desc()).all()
-    return render_template('index.html', posts=posts)
-
+@app.route('/<int:upc>', methods=['GET'])
+def get_product(task_id):
+    task = [task for task in tasks if task['id'] == task_id]
+    if len(task) == 0:
+        abort(404)
+    return jsonify({'task': task[0]})
 
 if __name__ == '__main__':
     app.run()
