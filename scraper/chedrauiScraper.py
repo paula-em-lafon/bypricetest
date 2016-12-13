@@ -1,25 +1,26 @@
 from bs4 import BeautifulSoup
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.command import Command
+
+import os
 import sys
 import traceback
-import re
+
 import requests
 import http.client
 import socket
 
-from settings import db, conn
-
-PHANTOMJS_PATH = './phantomjs/phantomjs'
+from settings import db
 
 FARMACIA_URL = 'http://www.chedraui.com.mx/index.php/ajusco/endeca/\
 category/view/id/457/'
 
-browser = webdriver.PhantomJS(PHANTOMJS_PATH)
-browser2 = webdriver.PhantomJS(PHANTOMJS_PATH)
+browser = webdriver.PhantomJS(os.environ['PHANTOMJS_PATH'])
+browser2 = webdriver.PhantomJS(os.environ['PHANTOMJS_PATH'])
 
 
 def open_url(openUrl):
@@ -133,12 +134,10 @@ def read_item_page(item_link):
 
 
 def add_edit_content(item_dict):
-    print (item_dict)
     query = db.query(
         "SELECT * from products WHERE upc = '{}';".format(item_dict['upc'])
     )
     prod_edit = query.fetch()
-    print(prod_edit)
     if prod_edit == []:
         max_val = db.query(
             "SELECT MAX(id) from products;"
@@ -148,7 +147,8 @@ def add_edit_content(item_dict):
             max_val_int = 0
         else:
             max_val_int = int(max_val[0]['max']) + 1
-        print(max_val_int)
+        print ("inserting product {1} at {0}".format(
+            max_val_int, item_dict['upc']))
         db.query(
             """
             INSERT INTO products(id, upc, item_name, price, image)
@@ -165,6 +165,8 @@ def add_edit_content(item_dict):
                     DELETE * from products WHERE id = {};
                     """.format(prod_edit[i]['id'])
                 )
+        print ("editing product {0} at id {1}".format(
+            item_dict['upc'], prod_edit[0]['id']))
         db.query(
             """
             UPDATE  products SET upc = '{}', item_name = '{}',
