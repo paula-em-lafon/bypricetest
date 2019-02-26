@@ -1,4 +1,4 @@
-#Byprice test#
+#Byprice test
 
 ##Description##
 Phantomjs and Selenium based webscraper that saves data to a PSQL database and API  to obtain data in json form
