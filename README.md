@@ -1,12 +1,12 @@
-#Byprice test
+# Byprice test
 
-##Description##
+## Description
 Phantomjs and Selenium based webscraper that saves data to a PSQL database and API  to obtain data in json form
 
 
-##clone the repo##
+## clone the repo
 
-##Download phantomjs into scraper folder##
+## Download phantomjs into scraper folder
 
 ```$ mkdir scraper/phantomjs
 
